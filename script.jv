@@ -1,0 +1,163 @@
+// ===== ROLAGEM SUAVE =====
+document.querySelectorAll('nav a').forEach(link => {
+    link.addEventListener('click', function(e){
+        e.preventDefault();
+        const id = this.getAttribute('href');
+        const section = document.querySelector(id);
+
+        section.scrollIntoView({
+            behavior: "smooth"
+        });
+    });
+});
+
+// ===== DESTACAR MENU ATIVO =====
+const sections = document.querySelectorAll("section");
+const navLinks = document.querySelectorAll("nav a");
+
+window.addEventListener("scroll", () => {
+    let current = "";
+
+    sections.forEach(sec => {
+        const top = sec.offsetTop;
+        if (scrollY >= top - 100) {
+            current = sec.getAttribute("id");
+        }
+    });
+
+    navLinks.forEach(a => {
+        a.style.color = "white";
+        if (a.getAttribute("href") === "#" + current) {
+            a.style.color = "#ff3d3d";
+        }
+    });
+});
+
+// ===== CURTIDAS =====
+document.querySelectorAll(".card").forEach(card => {
+    const btn = document.createElement("button");
+    btn.innerText = "❤️ Curtir (0)";
+    btn.style.marginTop = "10px";
+
+    let likes = 0;
+
+    btn.addEventListener("click", () => {
+        likes++;
+        btn.innerText = `❤️ Curtir (${likes})`;
+    });
+
+    card.appendChild(btn);
+});
+
+// ===== FAVORITOS =====
+document.querySelectorAll(".card").forEach(card => {
+    card.addEventListener("dblclick", () => {
+        card.style.border = "2px solid gold";
+    });
+});
+
+// ===== VER MAIS / VER MENOS =====
+document.querySelectorAll(".card").forEach(card => {
+    const p = card.querySelector("p");
+    if (!p) return;
+
+    const texto = p.innerText;
+
+    if (texto.length > 120) {
+        const curto = texto.substring(0,120) + "...";
+
+        p.innerText = curto;
+
+        const btn = document.createElement("button");
+        btn.innerText = "Ver mais";
+        btn.style.display = "block";
+        btn.style.marginTop = "10px";
+
+        let aberto = false;
+
+        btn.addEventListener("click", () => {
+            aberto = !aberto;
+            p.innerText = aberto ? texto : curto;
+            btn.innerText = aberto ? "Ver menos" : "Ver mais";
+        });
+
+        card.appendChild(btn);
+    }
+});
+
+// ===== ANIMAÇÃO AO APARECER =====
+const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.style.opacity = 1;
+            entry.target.style.transform = "translateY(0)";
+        }
+    });
+});
+
+document.querySelectorAll(".card").forEach(card => {
+    card.style.opacity = 0;
+    card.style.transform = "translateY(50px)";
+    card.style.transition = "0.6s";
+    observer.observe(card);
+});
+
+// ===== RANKING UFC (SIMULADO) =====
+const ranking = [
+    "Jon Jones",
+    "Islam Makhachev",
+    "Alexander Volkanovski",
+    "Leon Edwards",
+    "Israel Adesanya"
+];
+
+const rankingCard = document.createElement("section");
+rankingCard.classList.add("card");
+
+const title = document.createElement("h2");
+title.innerText = "Ranking Atual (Simulado)";
+rankingCard.appendChild(title);
+
+const list = document.createElement("ul");
+
+ranking.forEach((lutador, i) => {
+    const li = document.createElement("li");
+    li.innerText = `${i+1}º - ${lutador}`;
+    list.appendChild(li);
+});
+
+rankingCard.appendChild(list);
+document.querySelector("main").appendChild(rankingCard);
+
+// ===== MENU MOBILE =====
+const nav = document.querySelector("nav ul");
+
+const menuBtn = document.createElement("button");
+menuBtn.innerText = "☰ Menu";
+menuBtn.style.display = "none";
+menuBtn.style.margin = "10px auto";
+menuBtn.style.padding = "10px";
+
+document.querySelector("nav").prepend(menuBtn);
+
+menuBtn.addEventListener("click", () => {
+    if (nav.style.display === "flex") {
+        nav.style.display = "none";
+    } else {
+        nav.style.display = "flex";
+        nav.style.flexDirection = "column";
+    }
+});
+
+function checkScreen(){
+    if (window.innerWidth < 768){
+        menuBtn.style.display = "block";
+        nav.style.display = "none";
+    } else {
+        menuBtn.style.display = "none";
+        nav.style.display = "flex";
+    }
+}
+
+window.addEventListener("resize", checkScreen);
+checkScreen();
